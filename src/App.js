@@ -19,7 +19,7 @@ const allDatesRef = timelineItems.reduce((acc, item) => {
     start: item.start,
     end: item.end,
   }]
-  
+
   return [...acc, ...newDates]
 }, [])
 
@@ -87,21 +87,30 @@ function App() {
                   const endIdx = sortAllDates.findIndex(e => e.refDate === item.end)
 
                   const marginLeft = (startIdx * COL_WIDTH) + (GAP * startIdx)
-                  const width = COL_WIDTH * endIdx + (GAP * endIdx)
+                  const width = ((COL_WIDTH * (endIdx - startIdx)) + (GAP * (endIdx - startIdx))) || COL_WIDTH
+
+                  const dinamicNameWrapperStyle = isEditingId === item.id ? '' : 'name'
+
                   return (
-                    <div key={item.id} className='text-nowrap name absolute mt-2' style={{
+                    <div key={item.id} className={`text-nowrap ${dinamicNameWrapperStyle} absolute mt-2`} style={{
                       marginLeft,
                       width
                     }}>
+
                       {
                         isEditingId === item.id ? (
-                          <div className='flex '>
-                            <input onChange={(e) => {
-                              setEditableName(e.target.value)
-                            }} value={editableName} autoFocus />
-                            <button onClick={handleEditName}>Save</button>
+                          <div >
+                            <span>
+                              <p className='text-xs'>{item.start} - {item.end}</p>
+                            </span>
+                            <div className='flex '>
+                              <input className='text-xs' onChange={(e) => {
+                                setEditableName(e.target.value)
+                              }} value={editableName} autoFocus />
+                              <button className='text-xs ml-1 bg-purple-300 p-1 rounded' onClick={handleEditName}>Save</button>
+                            </div>
                           </div>
-                        ) : <p className='text-sm pl-1 cursor-pointer' onClick={handleStartEditName(item)}>{item.name}</p>
+                        ) : <p className='text-sm pl-1 cursor-pointer overflow-auto' onClick={handleStartEditName(item)}>{item.name}</p>
                       }
                     </div>
                   )
